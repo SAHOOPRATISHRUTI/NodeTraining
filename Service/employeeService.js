@@ -1,5 +1,6 @@
 const Employee = require('../model/employeeModel'); // model path
-const ObjectId = require("mongoose").Types.ObjectId;
+const { ObjectId } = require('mongoose').Types;
+
 
 
 //FUNCTION TO CREATE EMPLOYEE
@@ -62,7 +63,7 @@ const deleteEmployee = async (id) => {
   // Check if id is a valid ObjectId
   if (!ObjectId.isValid(id)) {
     throw new Error('Invalid ID format');
-    console.log("Invalid id");
+    // console.log("Invalid id");
   }
 
   // Find and delete the employee
@@ -72,6 +73,33 @@ const deleteEmployee = async (id) => {
   return result; // Return the deleted document or null if not found
 };
 
+// Function to get a specific employee by ID
+const getEmployeeById = async (id) => {
+  console.log('Fetching employee by ID:', id);
+  return await Employee.findById(id);
+};
+
+// Function to get all employees
+const getAllEmployees = async () => {
+  console.log('Fetching all employees');
+  return await Employee.find({ isActive: true }); // You might filter by active status or other criteria
+};
+
+
+// Function to update an employee's details using PUT
+const updateEmployee = async (id, data) => {
+  console.log('Updating employee ID:', id, 'with data:', data);
+  return await Employee.findByIdAndUpdate(id, data, { new: true });
+};
+
+// Function to partially update an employee's details using PATCH
+const patchEmployee = async (id, data) => {
+  console.log('Patching employee ID:', id, 'with data:', data);
+  return await Employee.findByIdAndUpdate(id, { $set: data }, { new: true });
+};
+
+
+
 
 
 
@@ -80,5 +108,9 @@ const deleteEmployee = async (id) => {
 module.exports = {
     createEmployee,
     checkDuplicateUserEntry,
-    deleteEmployee
+    deleteEmployee,
+    getEmployeeById,
+    getAllEmployees,
+    updateEmployee,
+    patchEmployee,
 };

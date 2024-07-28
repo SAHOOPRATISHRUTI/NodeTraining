@@ -2,7 +2,10 @@ const express = require("express");
 const router = express.Router();
 const employeeController = require('../controller/employeeController');
 
-// Define the route for creating an employee
+
 router.post("/createEmployee", employeeController.createEmployee);
-router.delete("/deleteEmployee/:id",employeeController.deleteEmployee)
+router.delete("/deleteEmployee/:id",employeeController.deleteEmployee);
+router.get("/employees/:id?",employeeController.getEmployees);
+router.put("/employees/:id",employeeController.updateEmployee)
+router.patch('/employees/:id', employeeController.patchEmployee);
 module.exports = router;
