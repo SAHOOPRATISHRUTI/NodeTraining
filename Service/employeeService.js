@@ -57,22 +57,6 @@ const checkDuplicateEmail = async (email) => {
   );
 }
 
-// FUNCTION TO DELETE EMPLOYEE
-const deleteEmployee = async (id) => {
-  console.log('Deleting Employee ID:', id);
-
-  // Check if id is a valid ObjectId
-  if (!ObjectId.isValid(id)) {
-    throw new Error('Invalid ID format');
-  }
-
-  // Find and delete the employee
-  const result = await Employee.findByIdAndDelete(id);
-
-  console.log('Deletion Result:', result);
-  return result;
-};
-
 // Function to get a specific employee by ID
 const getEmployeeById = async (id) => {
   console.log('Fetching employee by ID:', id);
@@ -85,24 +69,13 @@ const getAllEmployees = async () => {
   return await Employee.find({ isActive: true });
 }
 
-// Function to update an employee's details using PUT
-const updateEmployee = async (id, data) => {
-  console.log('Updating employee ID:', id, 'with data:', data);
-  return await Employee.findByIdAndUpdate(id, data, { new: true });
-};
 
-// Function to partially update an employee's details using PATCH
-const patchEmployee = async (id, data) => {
-  console.log('Patching employee ID:', id, 'with data:', data);
-  return await Employee.findByIdAndUpdate(id, { $set: data }, { new: true });
-};
+
+
 
 module.exports = {
   createEmployee,
   checkDuplicateUserEntry: checkDuplicates,
-  deleteEmployee,
   getEmployeeById,
   getAllEmployees,
-  updateEmployee,
-  patchEmployee,
-};
+}
