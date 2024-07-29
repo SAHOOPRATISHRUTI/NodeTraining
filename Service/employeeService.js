@@ -1,76 +1,76 @@
 const Employee = require('../model/employeeModel'); // model path
 const { ObjectId } = require('mongoose').Types;
+const commonHelper = require('../helper/commonHelper'); // Import commonHelper
 
+// FUNCTION TO CREATE EMPLOYEE
+const createEmployee = async (data) => {
+  console.log("DATA:", data);
 
+  // TO CHECK EMAIL IS DUPLICATE OR NOT
+  const [emailDetails] = await checkDuplicates(data.email);
 
-//FUNCTION TO CREATE EMPLOYEE
-const createEmployee = async(data)=>{
-  console.log("DATA:",data);
+  console.log("emailDetails:", emailDetails);
 
-//TO CHECK EMAIL IS DUPLICATE OR NOT 
-  const [emailDetails]= await checkDuplicates(
-    data.email,
-    data.empId
-  );
-
-  console.log("emaildetails",emailDetails);
-  if(emailDetails){
+  if (emailDetails) {
     return {
-      isDuplicateEmail:true,
+      isDuplicateEmail: true,
     };
   }
-    //IF EMAIL IS NOT DUPLICATE PROCEED TO CREATE NE EMPLOYEE
-  if(!emailDetails){
-    const inputData={
-      name:data.name,
-      email:data.email,
-      password:data.password,
-      
-    };
-    const empData = new Employee(inputData); //CREATE A NEW INSTANCE EMPLOYEE
-    const result= await empData.save(); //SAVE THE NEW EMPLOYEE DOC. TO DB
-    return result;
+
+  // IF EMAIL IS NOT DUPLICATE PROCEED TO CREATE NEW EMPLOYEE
+  if (!emailDetails) {
+    try {
+      // Hash the password using commonHelper
+      const hashedPassword = await commonHelper.generateHashPassword(data.password);
+
+      const inputData = {
+        name: data.name,
+        email: data.email,
+        password: hashedPassword, // Store the hashed password
+      };
+
+      const empData = new Employee(inputData); // CREATE A NEW INSTANCE OF EMPLOYEE
+      const result = await empData.save(); // SAVE THE NEW EMPLOYEE DOC. TO DB
+
+      return result;
+    } catch (error) {
+      console.error("Error creating employee:", error);
+      throw error;
+    }
   }
 
-  return result;
-
-}
-
-//FUN TO VERIFY DUPLICATE EMPLOYEE
-const checkDuplicates = async (email) =>{
-  console.log('email',email);
-  return await Promise.all([checkDuplicateEmail(email)])
-}
-///FUN TO VERIFY DUPLICATE EMPLOYEE EMAIL
-const checkDuplicateEmail = async (email,organizationId)=>{
-  console.log('email',email); 
-  return await Employee.findOne(
-    {email,isActive:true},
-    {_id:1,email:1,name:1,isActive:1}
-  )
-}
-/**FUNC- TO VERIFY DUPLICATE USER */
-const checkDuplicateUserEntry = async (data) => {
-  console.log("email--", data.email);
-  return await checkDuplicateEmail(data.email);
+  return null;
 };
 
+// FUN TO VERIFY DUPLICATE EMPLOYEE
+const checkDuplicates = async (email) => {
+  console.log('email', email);
+  return await Promise.all([checkDuplicateEmail(email)]);
+}
 
-// FUNCTION TO DELETE EMPLOYEE 
+// FUN TO VERIFY DUPLICATE EMPLOYEE EMAIL
+const checkDuplicateEmail = async (email) => {
+  console.log('email', email);
+  return await Employee.findOne(
+    { email, isActive: true },
+    { _id: 1, email: 1, name: 1, isActive: 1 }
+  );
+}
+
+// FUNCTION TO DELETE EMPLOYEE
 const deleteEmployee = async (id) => {
   console.log('Deleting Employee ID:', id);
 
   // Check if id is a valid ObjectId
   if (!ObjectId.isValid(id)) {
     throw new Error('Invalid ID format');
-    // console.log("Invalid id");
   }
 
   // Find and delete the employee
-  const result = await Employee.findByIdAndDelete(id); // Use findByIdAndDelete for  delete
+  const result = await Employee.findByIdAndDelete(id);
 
-  console.log('Deletion Result:', result); // Log the result for debugging
-  return result; // Return the deleted document or null if not found
+  console.log('Deletion Result:', result);
+  return result;
 };
 
 // Function to get a specific employee by ID
@@ -82,9 +82,8 @@ const getEmployeeById = async (id) => {
 // Function to get all employees
 const getAllEmployees = async () => {
   console.log('Fetching all employees');
-  return await Employee.find({ isActive: true }); // You might filter by active status or other criteria
-};
-
+  return await Employee.find({ isActive: true });
+}
 
 // Function to update an employee's details using PUT
 const updateEmployee = async (id, data) => {
@@ -98,19 +97,12 @@ const patchEmployee = async (id, data) => {
   return await Employee.findByIdAndUpdate(id, { $set: data }, { new: true });
 };
 
-
-
-
-
-
-
-
 module.exports = {
-    createEmployee,
-    checkDuplicateUserEntry,
-    deleteEmployee,
-    getEmployeeById,
-    getAllEmployees,
-    updateEmployee,
-    patchEmployee,
+  createEmployee,
+  checkDuplicateUserEntry: checkDuplicates,
+  deleteEmployee,
+  getEmployeeById,
+  getAllEmployees,
+  updateEmployee,
+  patchEmployee,
 };
