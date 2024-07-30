@@ -1,18 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const employeeController = require('../controller/employeeController'); // Ensure correct path
-const authController=require('../controller/authController')
+const employeeController = require('../controller/employeeController'); 
+const validator = require('../validator/employeeValidator.js'); 
+
 // Check that the controller functions are correctly defined
-router.post("/createEmployee", employeeController.createEmployee);
-router.get("/employees/:id?", employeeController.getEmployees);
-router.post('/login-password', authController.loginWithPassword); // Ensure this is correctly defined
+router.post("/createEmployee", 
+    validator.createEmployeeValidator,
+    employeeController.createEmployee);
 
+router.get("/employees/:id?",
+     employeeController.getEmployees);
 
-
-// Route to request OTP
-router.post('/request-otp', authController.requestOTP);
-
-// Route to handle login with OTP
-router.post('/login-otp', authController.loginWithOTP);
 
 module.exports = router;

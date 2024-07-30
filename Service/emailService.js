@@ -1,6 +1,4 @@
 const {transporter, mailOptions} = require("../emailSetup/mailsetUp");
-
-
 // const emailConstants = require("../constants/emailConstants");
 
 /**FUNC- TO SEND EMAIL TO USER */
