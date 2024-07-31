@@ -2,8 +2,7 @@ const authService = require('../Service/authService');
 const Response = require('../helper/response');
 const message = require('../constants/constantMessage');
 const Employee = require('../model/employeeModel');
-
-
+const authMiddleware = require('../middlewares/authMiddleware')
 
 // Function to handle login with password
 const loginWithPassword = async (req, res) => {
@@ -12,13 +11,17 @@ const loginWithPassword = async (req, res) => {
     const result = await authService.loginWithPassword(email, password);
 
     if (result.success) {
+      const token = await authMiddleware.generateUserToken({ email: req.body.email });
+      
+
       return Response.succesResponse(
         req,
         res,
-        { employee: result.employee },
+        { employee: result.employee,token },
         message.loginSuccess,
         200
       );
+
     } else {
       return Response.failResponse(
         req,
@@ -28,6 +31,7 @@ const loginWithPassword = async (req, res) => {
         401 // Unauthorized status for incorrect credentials
       );
     }
+    
   } catch (error) {
     console.error('Error during login:', error);
     return Response.errorResponse(req, res, error);

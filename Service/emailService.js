@@ -15,9 +15,9 @@ const sendEmail = async (
     html: mailData,
   
   };
-  console.log(mailOptionsInfo);
+  // console.log(mailOptionsInfo);
   const isSuccess = await transporter.sendMail(mailOptionsInfo);
-  console.log("isSuccess-------------", isSuccess);
+  // console.log("isSuccess-------------", isSuccess);
   return isSuccess;
 };
 

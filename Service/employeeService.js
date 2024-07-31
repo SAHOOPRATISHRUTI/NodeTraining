@@ -69,7 +69,18 @@ const getAllEmployees = async () => {
   return await Employee.find({ isActive: true });
 }
 
-
+const verifyEmployee = async (email) => {
+  console.log("empId-----------", email);
+  return await Employee.findOne(
+    { email, isActive: true },
+    {
+      _id: 1,
+      email: 1,
+      name: 1,
+      isActive: 1,
+    }
+  );
+};
 
 
 
@@ -78,4 +89,5 @@ module.exports = {
   checkDuplicateUserEntry: checkDuplicates,
   getEmployeeById,
   getAllEmployees,
+  verifyEmployee
 }

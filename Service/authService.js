@@ -34,8 +34,23 @@ const generateOTP = async (email) => {
     return { success: false, message: 'Email not found in employee records' };
   }
 
+  const currentTime = Date.now();
+
+  // Remove expired OTPs
+  await OTP.deleteMany({ email, expiresAt: { $lt: currentTime } });
+
+  // Check how many OTPs have been sent recently
+  const recentOTPs = await OTP.find({ 
+    email,
+    expiresAt: { $gte: currentTime } // Only consider non-expired OTPs
+  });
+
+  if (recentOTPs.length >= 3) {
+    return { success: false, message: 'OTP request limit reached. Please try again later.' };
+  }
+
   const otp = crypto.randomInt(100000, 999999); // Generate a 6-digit OTP
-  const expiresAt = Date.now() + 5 * 60 * 1000; // OTP expires in 5 minutes
+  const expiresAt = currentTime + 5 * 60 * 1000; // OTP expires in 5 minutes
 
   // Save OTP to the database
   const otpEntry = new OTP({
@@ -63,6 +78,7 @@ const generateOTP = async (email) => {
   }
 };
 
+
 // Function to verify OTP
 const verifyOTP = async (email, otp) => {
   // Find the OTP entry for the given email and OTP
@@ -79,6 +95,7 @@ const verifyOTP = async (email, otp) => {
 
   return { success: true, message: 'OTP verified successfully' };
 };
+
 
 
 
