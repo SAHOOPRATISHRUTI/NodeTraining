@@ -83,11 +83,41 @@ const getEmployees = async (req, res) => {
 };
 
 
+  const listEmployee = async (req, res) => {
+    try {
+      const result = await employeeService.listEmployee(req.body, req.query);
+      if (result.totalCount === 0) {
+        return Response.failResponse(
+          req,
+          res,
+          null,
+          message.recordsNotFound,
+          200
+        );
+      }
+  
+      return Response.succesResponse(
+        req,
+        res,
+        result,
+        message.recordsFound,
+        200
+      );
+    } catch (error) {
+      console.error("Error in listEmployee controller:", error);
+      return Response.errorResponse(req, res, error);
+    }
+  };
+
+  
+
+
 
 
 module.exports={
   createEmployee,
  
   getEmployees,
+  listEmployee,
   
 }

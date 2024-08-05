@@ -39,7 +39,7 @@ const generateOTP = async (email) => {
   // Remove expired OTPs
   await OTP.deleteMany({ email, expiresAt: { $lt: currentTime } });
 
-  // Check how many OTPs have been sent recently
+  // Check how many OTPs have been sent recentlyf
   const recentOTPs = await OTP.find({ 
     email,
     expiresAt: { $gte: currentTime } // Only consider non-expired OTPs

@@ -11,6 +11,11 @@ router.post("/createEmployee",
 router.get("/employees/:id",
     authMiddleware.verifyUserToken,
      employeeController.getEmployees);
+     
+router.post("/listEmployees", 
+        authMiddleware.verifyUserToken, // Ensure route is protected
+        employeeController.listEmployee
+      );
 
 
 module.exports = router;

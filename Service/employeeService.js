@@ -1,5 +1,5 @@
 const Employee = require('../model/employeeModel'); // model path
-const { ObjectId } = require('mongoose').Types;
+// const { ObjectId } = require('mongoose').Types;
 const commonHelper = require('../helper/commonHelper'); // Import commonHelper
 
 // FUNCTION TO CREATE EMPLOYEE
@@ -69,6 +69,47 @@ const getAllEmployees = async () => {
   return await Employee.find({ isActive: true });
 }
 
+/** FUNCTION TO LIST EMPLOYEES */
+const listEmployee = async (bodyData, queryData) => {
+  const { order  } = queryData; // Default order is ascending
+  const { searchKey } = bodyData;
+
+  // Construct the query
+  let query = searchKey
+    ? {
+        $and: [
+          {
+            $or: [
+              { name: { $regex: searchKey, $options: "i" } },
+              { email: { $regex: searchKey, $options: "i" } },
+            ],
+          },
+          {
+            isActive: true,
+          },
+        ],
+      }
+    : {
+        isActive: true,
+      };
+
+  // Pagination setup
+  const limit = queryData.limit ? parseInt(queryData.limit) : 0; // Default limit to 10
+  const skip = queryData.page ? (parseInt(queryData.page) - 1) * limit : 0;
+
+  // Fetch employee data
+  const totalCount = await Employee.countDocuments(query);
+  const employeeData = await Employee.find(query)
+    .sort({ _id: parseInt(order) })
+    .skip(skip)
+    .limit(limit);
+    
+    console.log("Emp Data ---",employeeData)
+
+  return { totalCount, employeeData };
+};
+
+
 const verifyEmployee = async (email) => {
   console.log("empId-----------", email);
   return await Employee.findOne(
@@ -89,5 +130,6 @@ module.exports = {
   checkDuplicateUserEntry: checkDuplicates,
   getEmployeeById,
   getAllEmployees,
+  listEmployee,
   verifyEmployee
 }
