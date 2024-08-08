@@ -12,7 +12,7 @@ const employeeSchema = new mongoose.Schema(
             type: String,
             validate: {
                 validator: validator.isEmail,
-                message: "{VALUE} is not a Valid Email"
+                message: "{VALUE} is not a valid email"
             },
             default: null,
             required: true,
@@ -29,12 +29,17 @@ const employeeSchema = new mongoose.Schema(
             index: true,
             default: true,
         },
+        role: {
+            type: String,
+            enum: ["USER", "ADMIN"],
+            default: "USER"
+        }
     },
     {
         timestamps: true,
     }
 );
 
-const Employee = mongoose.model('Employee', employeeSchema); // Ensure this is using mongoose.model
+const Employee = mongoose.model('Employee', employeeSchema);
 
 module.exports = Employee;

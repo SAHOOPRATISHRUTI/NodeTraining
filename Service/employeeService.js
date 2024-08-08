@@ -27,6 +27,7 @@ const createEmployee = async (data) => {
         name: data.name,
         email: data.email,
         password: hashedPassword, // Store the hashed password
+        role: data.role // Include role in the data
       };
 
       const empData = new Employee(inputData); // CREATE A NEW INSTANCE OF EMPLOYEE
@@ -42,11 +43,13 @@ const createEmployee = async (data) => {
   return null;
 };
 
+
 // FUN TO VERIFY DUPLICATE EMPLOYEE
 const checkDuplicates = async (email) => {
   console.log('email', email);
   return await Promise.all([checkDuplicateEmail(email)]);
 }
+
 
 // FUN TO VERIFY DUPLICATE EMPLOYEE EMAIL
 const checkDuplicateEmail = async (email) => {

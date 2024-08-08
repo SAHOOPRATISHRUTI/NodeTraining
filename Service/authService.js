@@ -7,23 +7,29 @@ const { sendEmail } = require('../emailSetup/mailsetUp');
 // Function to log in an employee using password
 const loginWithPassword = async (email, password) => {
   try {
+    console.log('Attempting to log in with:', email);
     const employee = await Employee.findOne({ email, isActive: true });
 
     if (!employee) {
+      console.log('No active employee found for email:', email);
       return { success: false, message: 'Email or password is incorrect' };
     }
 
     const isMatch = await bcrypt.compare(password, employee.password);
 
     if (!isMatch) {
+      console.log('Password does not match for email:', email);
       return { success: false, message: 'Email or password is incorrect' };
     }
 
+    console.log('Login successful for email:', email);
     return { success: true, message: 'Login successful', employee };
   } catch (error) {
+    console.error('Error during login:', error);
     throw error;
   }
 };
+
 
 // Function to generate and store OTP
 const generateOTP = async (email) => {
@@ -49,7 +55,7 @@ const generateOTP = async (email) => {
     return { success: false, message: 'OTP request limit reached. Please try again later.' };
   }
 
-  const otp = crypto.randomInt(100000, 999999); // Generate a 6-digit OTP
+  const otp = crypto.randomInt(1000, 9999); // Generate a 6-digit OTP
   const expiresAt = currentTime + 5 * 60 * 1000; // OTP expires in 5 minutes
 
   // Save OTP to the database

@@ -79,6 +79,7 @@ const configCreatedSuccess = "Configuration Created successfully!";
 const configUpdateSuccess = "Configuration Updated successfully!";
 const rescheduledSuccess="Meeting rescheduled successfully."
 const accessDenied="Access denied!";
+const permissionDenied="Permission Deniedd!!"
 const momWritePermissionDenied="MOM write permission access denied!"
 module.exports = {
   momWritePermissionDenied,
@@ -130,5 +131,6 @@ module.exports = {
   canceled,
   cancelFailed,
   configCreatedSuccess,
-  configUpdateSuccess
+  configUpdateSuccess,
+  permissionDenied
 };

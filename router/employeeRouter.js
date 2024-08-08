@@ -13,7 +13,7 @@ router.get("/employees/:id",
      employeeController.getEmployees);
      
 router.post("/listEmployees", 
-        authMiddleware.verifyUserToken, // Ensure route is protected
+        // authMiddleware.verifyUserToken, // Ensure route is protected
         employeeController.listEmployee
       );
 

@@ -3,39 +3,50 @@ const Response = require('../helper/response')
 const message = require('../constants/constantMessage')
 const { ObjectId } = require('mongoose').Types;
 
-//Function to createaEmployee
-const createEmployee= async(req,res)=>{
-  try{
-    const result=await employeeService.createEmployee(
-      req.body,
-    );
-    console.log("result:",result);
-    if(result?.isDuplicateEmail){
+
+// Function to create an employee
+const createEmployee = async (req, res) => {
+  try {
+    const { role: userRole } = req.body;
+
+    // Check if the user role is 'ADMIN' or other permitted roles
+    // Adjust this condition based on your requirements
+    if (!['USER', 'ADMIN'].includes(userRole)) {
+      return Response.failResponse(
+        req,
+        res,
+        null,
+        "Invalid role value",
+        400 // Bad request
+      );
+    }
+
+    // Pass data to service for creation
+    const result = await employeeService.createEmployee(req.body);
+
+    if (result.isDuplicateEmail) {
       return Response.failResponse(
         req,
         res,
         null,
         message.duplicateEmail,
         200
-    )
+      );
     }
 
     return Response.succesResponse(
       req,
       res,
-      null,
+      result,
       message.createdSuccess,
       201
-      
-    )
-    
-  }
-  catch (error) {
-    console.log(error);
-  
+    );
+  } catch (error) {
+    console.error('Error creating employee:', error.message);
     return Response.errorResponse(req, res, error);
   }
-}
+};
+
 
 
 // Function to get all employees or a specific employee by ID

@@ -32,7 +32,7 @@ const verifyOtpValidator = async (req, res, next) => {
         email: Joi.string().email().required(),
         otp: Joi.string()
           .trim()
-          .length(6)
+          .length(4)
           .pattern(/^[0-9]+$/)
           .messages({ "string.pattern.base": `OTP must have 6 digits.` })
           .required()

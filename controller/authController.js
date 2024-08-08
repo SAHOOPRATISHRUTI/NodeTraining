@@ -11,18 +11,19 @@ const loginWithPassword = async (req, res) => {
     const result = await authService.loginWithPassword(email, password);
 
     if (result.success) {
-      const token = await authMiddleware.generateUserToken({ email: req.body.email });
-      
+      // Generate a token for the authenticated user
+      const token = await authMiddleware.generateUserToken({ email });
 
+      // Send a successful response with employee data and token
       return Response.succesResponse(
         req,
         res,
-        { employee: result.employee,token },
+        { employee: result.employee, token },
         message.loginSuccess,
         200
       );
-
     } else {
+      // Send a failure response for incorrect credentials
       return Response.failResponse(
         req,
         res,
@@ -31,8 +32,8 @@ const loginWithPassword = async (req, res) => {
         401 // Unauthorized status for incorrect credentials
       );
     }
-    
   } catch (error) {
+    // Log the error and send a generic error response
     console.error('Error during login:', error);
     return Response.errorResponse(req, res, error);
   }
